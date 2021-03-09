@@ -1,0 +1,9 @@
+{
+  "snippets.ultisnips.directories": [
+    "UltiSnips",
+    "$HOME/.config/nvim/MyUltiSnips",
+    "$HOME/.config/nvim/plugged/vim-snippets/ultisnips"
+  ],
+  "suggest.maxCompleteItemCount": 20
+
+}
