@@ -8,6 +8,7 @@
 " === my custom performance
 " ===
 let mapleader=' '
+set clipboard+=unnamedplus
 nnoremap <C-s> :call SudoWriter()<CR>
 nnoremap <C-q> :q!<CR>
 noremap H 5h
@@ -31,7 +32,7 @@ endfunction
 " auto parentheses
 inoremap ( ()<ESC>i
 inoremap ) <c-r>=ClosePair(')')<CR>
-inoremap { {<CR>}<ESC>O
+inoremap { {}<ESC>i
 inoremap } <c-r>=ClosePair('}')<CR>
 inoremap [ []<ESC>i
 inoremap ] <c-r>=ClosePair(']')<CR>
@@ -79,7 +80,13 @@ Plug 'vim-airline/vim-airline-themes'
 
 
 "oceanic-material color scheme
-Plug 'glepnir/oceanic-material'
+" Plug 'glepnir/oceanic-material'
+
+" nord color theme
+Plug 'arcticicestudio/nord-vim'
+
+" vim airline theme
+Plug 'vim-airline/vim-airline-themes'
 
 "show git status in airline
 Plug 'airblade/vim-gitgutter'
@@ -118,6 +125,7 @@ Plug 'chrisbra/Colorizer'
 
 " markdown preview
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+
 call plug#end()
 
 
@@ -182,15 +190,21 @@ let g:airline#extensions#branch#enabled = 1
 " ===
 " === colorscheme
 " ===
-colorscheme oceanic_material
-let g:oceanic_material_allow_bold = 1
-let g:oceanic_material_allow_italic = 1
-let g:oceanic_material_allow_underline = 1
-let g:oceanic_material_allow_undercurl = 1
-let g:oceanic_material_transparent_background = 1
-hi Normal ctermbg=none
-hi NonText ctermbg=none
-hi LineNr ctermbg=none
+colorscheme nord
+" colorscheme oceanic_material
+" let g:oceanic_material_allow_bold = 1
+" let g:oceanic_material_allow_italic = 1
+" let g:oceanic_material_allow_underline = 1
+" let g:oceanic_material_allow_undercurl = 1
+" let g:oceanic_material_transparent_background = 1
+" hi Normal ctermbg=none
+" hi NonText ctermbg=none
+" hi LineNr ctermbg=none
+" ===
+" === vim-airline-theme
+" ===
+let g:airline_theme = 'nord'
+
 
 " ===
 " === fzf
@@ -243,5 +257,5 @@ let g:vimspector_install_gadgets = [ 'debugpy', 'vscode-cpptools', 'vscode-bash-
 " ===
 " === markdown-preview
 " ===
-nnoremap <LEADER>m <Plug>MarkdownPreview
+nnoremap <LEADER>m <Plug>(MarkdownPreview)
 
