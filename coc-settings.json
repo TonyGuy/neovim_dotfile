@@ -4,6 +4,9 @@
     "$HOME/.config/nvim/MyUltiSnips",
     "$HOME/.config/nvim/plugged/vim-snippets/ultisnips"
   ],
-  "suggest.maxCompleteItemCount": 20
+  "suggest.maxCompleteItemCount": 20,
+  "java.home":"/usr/lib/jvm/default",
+  "java.autobuild.enabled": false
+
 
 }

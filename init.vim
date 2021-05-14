@@ -1,9 +1,9 @@
-"  _____ _ _ _       _ __     ___           _____ _ _      
-" | ____| | (_) ___ | |\ \   / (_)_ __ ___ |  ___(_) | ___ 
+"  _____ _ _ _       _ __     ___           _____ _ _
+" | ____| | (_) ___ | |\ \   / (_)_ __ ___ |  ___(_) | ___
 " |  _| | | | |/ _ \| __\ \ / /| | '_ ` _ \| |_  | | |/ _ \
 " | |___| | | | (_) | |_ \ V / | | | | | | |  _| | | |  __/
 " |_____|_|_|_|\___/ \__| \_/  |_|_| |_| |_|_|   |_|_|\___|
-"                                                          
+"
 " ===
 " === my custom performance
 " ===
@@ -15,9 +15,17 @@ noremap H 5h
 noremap J 5j
 noremap K 5k
 noremap L 5l
-noremap <LEADER>bn :bn<CR>  
-noremap <LEADER>bd :bd<CR>  
-noremap <LEADER>bp :bp<CR>  
+noremap <LEADER>bn :bn<CR>
+noremap <LEADER>bd :bd<CR>
+noremap <LEADER>bp :bp<CR>
+" java compile
+noremap <LEADER>jc :CocCommand java.workspace.compile
+
+" window size adjust
+noremap <C-h> :vertical resize -5<CR>
+noremap <C-l> :vertical resize +5<CR>
+noremap <C-j> :resize +5<CR>
+noremap <C-k> :resize -5<CR>
 
 " judge the file is writable
 function SudoWriter()
@@ -39,11 +47,11 @@ inoremap ] <c-r>=ClosePair(']')<CR>
 inoremap " ""<ESC>i
 inoremap ' ''<ESC>i
 function! ClosePair(char)
-    if getline('.')[col('.') - 1] == a:char
-		        return "\<Right>"
-	else
-			    return a:char
-	endif
+  if getline('.')[col('.') - 1] == a:char
+    return "\<Right>"
+  else
+    return a:char
+  endif
 endfunction
 
 "set up function
@@ -84,6 +92,10 @@ Plug 'vim-airline/vim-airline-themes'
 
 " nord color theme
 Plug 'arcticicestudio/nord-vim'
+
+" tokyonight colorscheme
+Plug 'ghifarit53/tokyonight-vim'
+
 
 " vim airline theme
 Plug 'vim-airline/vim-airline-themes'
@@ -126,6 +138,8 @@ Plug 'chrisbra/Colorizer'
 " markdown preview
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
+" float term
+Plug 'voldikss/vim-floaterm'
 call plug#end()
 
 
@@ -141,6 +155,8 @@ let g:coc_global_extensions = [
       \ 'coc-clangd',
       \ 'coc-cmake',
       \ 'coc-snippets',
+      \ 'coc-java',
+      \ 'coc-java-debug',
       \ 'coc-python',
       \ 'coc-vimlsp']
 
@@ -160,7 +176,7 @@ function! s:check_back_space() abort
 endfunction
 
 " Use <c-o> to trigger completion.
-inoremap <silent><expr> <C-o> coc#refresh()
+inoremap <silent><expr> <C-l> coc#refresh()
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -171,6 +187,7 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <LEADER>gf :CocFix<CR>
 " Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 " Symbol renaming.
@@ -183,7 +200,6 @@ nmap <leader>rn <Plug>(coc-rename)
 
 "Automatically displays all buffers when there's only one tab open.
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme = 'molokai'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#branch#enabled = 1
 
@@ -200,6 +216,18 @@ colorscheme nord
 " hi Normal ctermbg=none
 " hi NonText ctermbg=none
 " hi LineNr ctermbg=none
+
+set termguicolors
+let g:tokyonight_style = 'storm' " available: night, storm
+let g:tokyonight_enable_italic = 1
+let g:tokyonight_transparent_background = 0
+let g:tokyonight_current_word = 'underline'
+colorscheme tokyonight
+
+" set termguicolors
+" colorscheme darkfrost
+
+
 " ===
 " === vim-airline-theme
 " ===
@@ -250,7 +278,7 @@ let g:indentLine_concealcursor = ''
 " ===
 " === vimspector
 " ===
-let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_enable_mappings = 'VISUAL_STUDIO'
 let g:vimspector_install_gadgets = [ 'debugpy', 'vscode-cpptools', 'vscode-bash-debug' ]
 
 
@@ -259,3 +287,9 @@ let g:vimspector_install_gadgets = [ 'debugpy', 'vscode-cpptools', 'vscode-bash-
 " ===
 nnoremap <LEADER>m <Plug>(MarkdownPreview)
 
+" ===
+" === vim-floaterm
+" ===
+let g:floaterm_keymap_toggle = '<F12>'
+let g:floaterm_width = 0.8
+let g:floaterm_height = 0.6
