@@ -22,10 +22,10 @@ noremap <LEADER>bp :bp<CR>
 noremap <LEADER>jc :CocCommand java.workspace.compile
 
 " window size adjust
-noremap <C-h> :vertical resize -5<CR>
-noremap <C-l> :vertical resize +5<CR>
-noremap <C-j> :resize +5<CR>
-noremap <C-k> :resize -5<CR>
+" noremap <C-H> :vertical resize -5<CR>
+" noremap <C-L> :vertical resize +5<CR>
+" noremap <C-J> :resize +5<CR>
+" noremap <C-K> :resize -5<CR>
 
 " judge the file is writable
 function SudoWriter()
@@ -37,22 +37,6 @@ function SudoWriter()
   endif
 endfunction
 
-" auto parentheses
-inoremap ( ()<ESC>i
-inoremap ) <c-r>=ClosePair(')')<CR>
-inoremap { {}<ESC>i
-inoremap } <c-r>=ClosePair('}')<CR>
-inoremap [ []<ESC>i
-inoremap ] <c-r>=ClosePair(']')<CR>
-inoremap " ""<ESC>i
-inoremap ' ''<ESC>i
-function! ClosePair(char)
-  if getline('.')[col('.') - 1] == a:char
-    return "\<Right>"
-  else
-    return a:char
-  endif
-endfunction
 
 "set up function
 set nu hls is ruler showcmd wildmenu wrap relativenumber splitbelow
@@ -140,6 +124,9 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 " float term
 Plug 'voldikss/vim-floaterm'
+
+" auto pair parentheses
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 
