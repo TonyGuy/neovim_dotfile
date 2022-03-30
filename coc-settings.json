@@ -2,7 +2,8 @@
   "snippets.ultisnips.directories": [
     "UltiSnips",
     "$HOME/.config/nvim/MyUltiSnips",
-    "$HOME/.config/nvim/plugged/vim-snippets/ultisnips"
+    "$HOME/.config/nvim/plugged/vim-snippets/ultisnips",
+    "$HOME/.config/nvim/plugged/vim-snippets/snippets"
   ],
   "suggest.maxCompleteItemCount": 20,
   "java.home":"/usr/lib/jvm/default",

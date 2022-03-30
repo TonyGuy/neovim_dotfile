@@ -11,10 +11,6 @@ let mapleader=' '
 set clipboard+=unnamedplus
 nnoremap <C-s> :call SudoWriter()<CR>
 nnoremap <C-q> :q!<CR>
-noremap H 5h
-noremap J 5j
-noremap K 5k
-noremap L 5l
 noremap <LEADER>bn :bn<CR>
 noremap <LEADER>bd :bd<CR>
 noremap <LEADER>bp :bp<CR>
@@ -37,12 +33,47 @@ function SudoWriter()
   endif
 endfunction
 
+if executable("fcitx") || executable("Vim-WinLangSwitcher.exe")
+  if executable("fcitx")
+    let g:ime2en_cmd = "fcitx-remote -c"
+    let g:ime2cn_cmd = "fcitx-remote -o"
+  else
+    let g:ime2en_cmd = "Vim-WinLangSwitcher.exe en"
+    let g:ime2cn_cmd = "Vim-WinLangSwitcher.exe cn"
+  endif
+
+  " 设置输入法为英文模式
+  function! IME2en()
+    if executable("fcitx")
+      let s:input_status = system("fcitx-remote")
+    else
+      let s:input_status = 2
+    endif
+    if s:input_status == 2
+      let g:input_toggle = 1
+      let l:a = system(g:ime2en_cmd)
+    endif
+  endfunction
+
+  " 设置输入法为中文模式
+    function! IME2zh()
+    if exists("g:input_toggle") == 1
+      if g:input_toggle == 1
+        let l:a = system(g:ime2cn_cmd)
+        let g:input_toggle = 0
+      endif
+    endif
+  endfunction
+
+  autocmd InsertLeave * call IME2en()
+  autocmd InsertEnter * call IME2zh()
+endif
 
 "set up function
 set nu hls is ruler showcmd wildmenu wrap relativenumber splitbelow
 set shell=/usr/bin/fish
 set updatetime=100
-set ts=2 sw=2 et
+set tabstop=4 shiftwidth=4 expandtab linespace=1
 
 
 "make vim always show five lines at the bottom or top
@@ -127,6 +158,15 @@ Plug 'voldikss/vim-floaterm'
 
 " auto pair parentheses
 Plug 'jiangmiao/auto-pairs'
+
+" Erlang indentation and syntax for Vim
+Plug 'vim-erlang/vim-erlang-runtime'
+Plug 'vim-erlang/vim-erlang-compiler'
+Plug 'vim-erlang/vim-erlang-tags'
+Plug 'ten0s/syntaxerl'
+Plug 'gleam-lang/gleam.vim'
+
+
 call plug#end()
 
 
@@ -280,3 +320,22 @@ nnoremap <LEADER>m <Plug>(MarkdownPreview)
 let g:floaterm_keymap_toggle = '<F12>'
 let g:floaterm_width = 0.8
 let g:floaterm_height = 0.6
+
+" ===
+" === syntastic
+" ===
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_erlang_checkers=['syntaxerl']
+
+" gen_server
+iab <gs> <esc>:set filetype=erlang<cr>:set fileencoding=utf-8<cr>i%%----------------------------------------------------<cr>%% @doc<cr>%% <cr>%% @author Zf<cr>%% @end<cr>%% Created : <c-r>=strftime("20%y-%m-%d %H:%M %A")<cr><cr>%%----------------------------------------------------<cr>-module().<cr>-behaviour(gen_server).<cr>-export([start_link/0, init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).<cr>-export([]).<cr><cr>-include("common.hrl").<cr><cr>-record(state, {}).<cr><cr>%%----------------------------------------------------<cr>%% 外部接口<cr>%%----------------------------------------------------<cr><cr>%% @doc 启动进程<cr>-spec start_link() -> Result when<cr>Result  :: {ok, Pid} \| ignore \| {error, Error},<cr>Pid     :: pid(),<cr>Error   :: {already_started, Pid} \| term().<cr>start_link() -><cr>gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).<cr><cr>%%----------------------------------------------------<cr>%% OTP apis<cr>%%----------------------------------------------------<cr><cr>init([]) -><cr>?INFO("正在启动..."),<cr>State = #state{},<cr>?INFO("启动完成"),<cr>{ok, State}.<cr><cr>handle_call(Request, _From, State) -><cr>case catch do_handle_call(Request, State) of<cr>{ok, Reply} -><cr>{reply, Reply, State};<cr>{ok, Reply, NewState = #state{}} -><cr>{reply, Reply, NewState};<cr>_Err -><cr>?ERR("处理消息异常  info:~w  err:~w", [Request, _Err]),<cr>{reply, false, State}<cr>end.<cr><cr>handle_cast(Msg, State) -><cr>case catch do_handle_cast(Msg, State) of<cr>ok -><cr>{noreply, State};<cr>{ok, NewState = #state{}} -><cr>{noreply, NewState};<cr>_Err -><cr>?ERR("处理消息异常  info:~w  err:~w", [Msg, _Err]),<cr>{noreply, State}<cr>end.<cr><cr>handle_info(Info, State) -><cr>case catch do_handle_info(Info, State) of<cr>ok -><cr>{noreply, State};<cr>{ok, NewState = #state{}} -><cr>{noreply, NewState};<cr>_Err -><cr>?ERR("处理消息异常  info:~w  err:~w", [Info, _Err]),<cr>{noreply, State}<cr>end.<cr><cr>terminate(_Reason, _State) -><cr>ok.<cr><cr>code_change(_OldVsn, State, _Extra) -><cr>{ok, State}.<cr><cr>%%----------------------------------------------------<cr>%% 内部私有<cr>%%----------------------------------------------------<cr><cr>do_handle_call(_, _) -><cr>false.<cr><cr>do_handle_cast(_, _) -><cr>false.<cr><cr>do_handle_info(_, _) -><cr>false.<cr><cr>%%----------------------------------------------------<cr>%% 测试用例<cr>%%----------------------------------------------------<cr>-ifdef(debug).<cr>-include_lib("eunit/include/eunit.hrl").<cr>-else.<cr>-endif.<cr>-ifdef(TEST).<cr><cr>-endif.<esc>2G
+" gen_fsm
+iab <gf> <esc>:set filetype=erlang<cr>:set fileencoding=utf-8<cr>i%%----------------------------------------------------<cr>%% @doc<cr>%%<cr>%% @author Zf<cr>%% @end<cr>%% Created : <c-r>=strftime("20%y-%m-%d %H:%M %A")<cr><cr>%%----------------------------------------------------<cr>-module().<cr>-behaviour(gen_fsm).<cr>-export([start_link/0, init/1, handle_event/3, handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).<cr>-export([]).<cr>-export([]).<cr><cr>-include("common.hrl").<cr><cr>-record(state, {<cr>%% 状态时间<cr>ts = 0                  :: tuple()<cr>    %% 状态超时时间<cr>    ,timeout = infinity     :: infinity \| non_neg_integer()<cr>}).<cr><cr>%%----------------------------------------------------<cr>%% 外部接口<cr>%%----------------------------------------------------<cr><cr>%% @doc 启动进程<cr>-spec start_link() -> Result when<cr>Result  :: {ok, Pid} \| ignore \| {error, Error},<cr>Pid     :: pid(),<cr>Error   :: {already_started, Pid} \| term().<cr>start_link()-><cr>gen_fsm:start_link({local, ?MODULE}, ?MODULE, [], []).<cr><cr>%%----------------------------------------------------<cr>%% 状态方法<cr>%%----------------------------------------------------<cr><cr>%%----------------------------------------------------<cr>%% OTP apis<cr>%%----------------------------------------------------<cr><cr>init([])-><cr>?INFO("正在启动..."),<cr>?INFO("启动完成"),<cr>{ok, state_name, #state{}, timeout}.<cr><cr>handle_event(Event, StateName, State) -><cr>case catch do_handle_event(Event, StateName, State) of<cr>ok -><cr>continue(StateName, State);<cr>{ok, NewState = #state{}} -><cr>continue(StateName, NewState);<cr>{ok, NewStateName, NewState = #state{}} -><cr>continue(NewStateName, NewState);<cr>_Err -><cr>?ERR("处理消息异常 info:~w state_name:~w err:~w", [Event,<cr>StateName, _Err]),<cr>continue(StateName, State)<cr>end.<cr><cr>handle_sync_event(Event, _From, StateName, State) -><cr>case catch do_handle_sync_event(Event, StateName, State) of<cr>{ok, Reply} -><cr>continue(Reply, StateName, State);<cr>{ok, Reply, NewState = #state{}} -><cr>continue(Reply, StateName, NewState);<cr>{ok, Reply, NewStateName, NewState} -><cr>continue(Reply, NewStateName, NewState);<cr>_Err -><cr>?ERR("处理消息异常 info:~w state_name:~w err:~w", [Event,<cr>StateName, _Err]),<cr>Reply = false,<cr>continue(Reply, StateName, State)<cr>end.<cr><cr>handle_info(Info, StateName, State) -><cr>case catch do_handle_info(Info, StateName, State) of<cr>ok -><cr>continue(StateName, State);<cr>{ok, NewState = #state{}} -><cr>continue(StateName, NewState);<cr>{ok, NewStateName, NewState = #state{}} -><cr>continue(NewStateName, NewState);<cr>_Err -><cr>?ERR("处理消息异常 info:~w state_name:~w err:~w", [Info,<cr>StateName, _Err]),<cr>continue(StateName, State)<cr>end.<cr><cr>terminate(_Reason, _StateName, _State) -><cr>ok.<cr><cr>code_change(_OldVsn, StateName, State, _Extra) -><cr>{ok, StateName, State}.<cr><cr>%%----------------------------------------------------<cr>%% 内部私有<cr>%%----------------------------------------------------<cr><cr>%% 继续下一个状态<cr>continue(StateName, State = #state{timeout = infinity}) -><cr>{next_state, StateName, State, infinity};<cr>continue(StateName, State = #state{ts = Ts, timeout = Timeout}) -><cr>{next_state, StateName, State, util:time_left(Timeout, Ts)}.<cr><cr>continue(Reply, StateName, State = #state{timeout = infinity}) -><cr>{reply, Reply, StateName, State, infinity};<cr>continue(Reply, StateName, State = #state{ts = Ts, timeout = Timeout}) -><cr>{reply, Reply, StateName, State, util:time_left(Timeout, Ts)}.<cr><cr>do_handle_event(_Event, _StateName, _State) -><cr>false.<cr><cr>do_handle_sync_event(_Event, _StateName, _State) -><cr>false.<cr><cr>do_handle_info(_Info, _StateName, _State) -><cr>false.<cr><cr>%%----------------------------------------------------<cr>%% 测试用例<cr>%%----------------------------------------------------<cr>-ifdef(debug).<cr>-include_lib("eunit/include/eunit.hrl").<cr>-else.<cr>-endif.<cr>-ifdef(TEST).<cr><cr>-endif.<esc>2G
+
