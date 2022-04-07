@@ -2,11 +2,11 @@ snippet my_gen_server "my_gen_server" b
 %%----------------------------------------------------
 %% @doc
 %%
-%% @author Zf
+%% @author Elliot
 %% @end
-%% Created : 2022-03-30 11:27 Wednesday
+%% Created : `!v strftime("%Y-%m-%d %H:%M:%S%z")`
 %%----------------------------------------------------
--module(${0:`vim_snippets#Filename()`}).
+-module(`!p snip.rv = snip.basename`).
 -behaviour(gen_server).
 -export([start_link/0, init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 -export([]).
@@ -97,4 +97,130 @@ do_handle_info(_, _) ->
 -ifdef(TEST).
 
 -endif.
+endsnippet
+
+snippet my_gen_fsm "my_gen_fsm" b
+%%----------------------------------------------------
+%% @doc
+%%%
+%%% @author Elliot
+%%% @end
+%%% Created : `!v strftime("%Y-%m-%d %H:%M:%S%z")`
+%%%----------------------------------------------------
+-module(`!p snip.rv = snip.basename`).
+-behaviour(gen_fsm).
+-export([start_link/0, init/1, handle_event/3, handle_sync_event/4, handle_info/3, terminate/3, code_change/4]).
+-export([]).
+-export([]).
+
+-record(state, {
+          %% 状态时间
+          ts = 0                  :: tuple()
+          %% 状态超时时间
+          ,timeout = infinity     :: infinity | non_neg_integer()
+         }).
+
+%%----------------------------------------------------
+%% 外部接口
+%%----------------------------------------------------
+
+%% @doc 启动进程
+-spec start_link() -> Result when
+      Result  :: {ok, Pid} | ignore | {error, Error},
+      Pid     :: pid(),
+      Error   :: {already_started, Pid} | term().
+start_link()->
+    gen_fsm:start_link({local, ?MODULE}, ?MODULE, [], []).
+
+%%----------------------------------------------------
+%% 状态方法
+%%----------------------------------------------------
+
+%%----------------------------------------------------
+%% OTP apis
+%%----------------------------------------------------
+
+init([])->
+    io:format("正在启动... ~n"),
+    io:format("启动完成 ~n"),
+    {ok, state_name, #state{}, timeout}.
+
+handle_event(Event, StateName, State) ->
+    case catch do_handle_event(Event, StateName, State) of
+        ok ->
+            continue(StateName, State);
+        {ok, NewState = #state{}} ->
+            continue(StateName, NewState);
+        {ok, NewStateName, NewState = #state{}} ->
+            continue(NewStateName, NewState);
+        _Err ->
+            io:format("处理消息异常 info:~w state_name:~w err:~w ~n", [Event, StateName, _Err]),
+            continue(StateName, State)
+    end.
+
+handle_sync_event(Event, _From, StateName, State) ->
+    case catch do_handle_sync_event(Event, StateName, State) of
+        {ok, Reply} ->
+            continue(Reply, StateName, State);
+        {ok, Reply, NewState = #state{}} ->
+            continue(Reply, StateName, NewState);
+        {ok, Reply, NewStateName, NewState} ->
+            continue(Reply, NewStateName, NewState);
+        _Err ->
+            io:format("处理消息异常 info:~w state_name:~w err:~w ~n", [Event,StateName, _Err]),
+            Reply = false,
+            continue(Reply, StateName, State)
+    end.
+
+handle_info(Info, StateName, State) ->
+    case catch do_handle_info(Info, StateName, State) of
+        ok ->
+            continue(StateName, State);
+        {ok, NewState = #state{}} ->
+            continue(StateName, NewState);
+        {ok, NewStateName, NewState = #state{}} ->
+            continue(NewStateName, NewState);
+        _Err ->
+            io:format("处理消息异常 info:~w state_name:~w err:~w", [Info,StateName, _Err]),
+            continue(StateName, State)
+    end.
+
+terminate(_Reason, _StateName, _State) ->
+    ok.
+
+code_change(_OldVsn, StateName, State, _Extra) ->
+    {ok, StateName, State}.
+
+%%----------------------------------------------------
+%% 内部私有
+%%----------------------------------------------------
+
+%% 继续下一个状态
+continue(StateName, State = #state{timeout = infinity}) ->
+    {next_state, StateName, State, infinity};
+continue(StateName, State = #state{ts = Ts, timeout = Timeout}) ->
+    {next_state, StateName, State, util:time_left(Timeout, Ts)}.
+
+continue(Reply, StateName, State = #state{timeout = infinity}) ->
+    {reply, Reply, StateName, State, infinity};
+continue(Reply, StateName, State = #state{ts = Ts, timeout = Timeout}) ->
+    {reply, Reply, StateName, State, util:time_left(Timeout, Ts)}.
+
+do_handle_event(_Event, _StateName, _State) ->
+    false.
+
+do_handle_sync_event(_Event, _StateName, _State) ->
+    false.
+
+do_handle_info(_Info, _StateName, _State) ->
+    false.
+
+%% @doc 计算剩余时间基于timestamp()格式，单位：毫秒
+-spec time_left(TimeMax::integer(), Begin::erlang:timestamp()) -> integer().
+time_left(TimeMax, Begin)->
+    T = erlang:floor(TimeMax - timer:now_diff(os:timestamp(), Begin) / 1000),
+    case T > 0 of
+        true -> T;
+        false -> 0
+    end.
 endsnippet

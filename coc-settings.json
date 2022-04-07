@@ -7,7 +7,11 @@
   ],
   "suggest.maxCompleteItemCount": 20,
   "java.home":"/usr/lib/jvm/default",
-  "java.autobuild.enabled": false
-
-
+  "java.autobuild.enabled": false,
+  "languageserver": {
+    "erlang": {
+      "command": "erlang_ls",
+      "filetypes": ["erlang"]
+    }
+  }
 }
