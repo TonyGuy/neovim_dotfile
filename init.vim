@@ -72,15 +72,21 @@ endif
 "set up function
 set nu hls is ruler showcmd wildmenu wrap relativenumber splitbelow
 set shell=/usr/bin/fish
-set updatetime=100
-set tabstop=4 shiftwidth=4 expandtab linespace=1
-
+set updatetime=100 
+set tabstop=4 shiftwidth=4 expandtab smarttab linespace=1
+set fileformats=unix,dos,mac "文件格式选择顺序
+set fileencodings=utf8,gbk,big5,ucs-bom "按照顺序选择编码格式
+set termencoding=utf-8 "终端编码格式
+set encoding=utf-8 "内部编码格式 buffer 菜单 消息等
+set langmenu=en_US.UTF-8 "菜单编码
 
 "make vim always show five lines at the bottom or top
 set scrolloff=5
 syntax enable
 filetype plugin indent on
 
+" erlang缩进管理
+source ~/.config/nvim/plugged/vim-erlang-runtime/indent/erlang.vim
 
 " ===
 " === Plug
@@ -92,6 +98,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 "depend: sudo pacman -S fzf
 "fzf support
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 "snippets
@@ -148,6 +155,7 @@ Plug 'puremourning/vimspector'
 " save on root
 Plug 'lambdalisue/suda.vim'
 
+" highlight rgb code
 Plug 'chrisbra/Colorizer'
 
 " markdown preview
@@ -162,10 +170,10 @@ Plug 'jiangmiao/auto-pairs'
 " Erlang indentation and syntax for Vim
 Plug 'vim-erlang/vim-erlang-runtime'
 Plug 'vim-erlang/vim-erlang-compiler'
-Plug 'vim-erlang/vim-erlang-tags'
-Plug 'ten0s/syntaxerl'
+" Plug 'ten0s/syntaxerl'
 Plug 'gleam-lang/gleam.vim'
 Plug 'neovim/nvim-lspconfig'
+
 call plug#end()
 
 
@@ -223,7 +231,6 @@ nmap <leader>rn <Plug>(coc-rename)
 " ===
 " === vim-airline
 " ===
-
 "Automatically displays all buffers when there's only one tab open.
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
@@ -323,15 +330,15 @@ let g:floaterm_height = 0.6
 " ===
 " === syntastic
 " ===
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_erlang_checkers=['syntaxerl']
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+" 
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_erlang_checkers=['syntaxerl']
 
 " ===
 " === nvim-lspconfig

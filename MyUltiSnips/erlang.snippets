@@ -224,3 +224,56 @@ time_left(TimeMax, Begin)->
         false -> 0
     end.
 endsnippet
+
+snippet hc "head line comment" b
+%% @doc ${1:comment}
+endsnippet
+
+snippet funchain "function chain" b
+${1:something_fun}(${2:Arg1}) ->
+    Steps =
+	[
+		'${3:do_something}'
+	],
+    Args = #{},
+    do_${1:something_fun}(Steps, ${2:Arg1}, Args).
+
+do_${1:something_fun}(['${3:do_something}' | Rest], ${2:Arg1}, Args = #{}) ->
+	do_${1:something_fun}(Rest, ${2:Arg1}, Args);
+do_${1:something_fun}([], _${2:Arg1}, _Args) ->
+	true.
+endsnippet
+
+snippet timeleft_template "timeleft definition" b
+%% @doc 计算剩余时间基于timestamp()格式，单位：毫秒
+-spec time_left(TimeMax::integer(), Begin::erlang:timestamp()) -> integer().
+time_left(TimeMax, Begin)->
+    T = floorr(TimeMax - timer:now_diff(os:timestamp(), Begin) / 1000),
+    case T > 0 of
+        true -> T;
+        false -> 0
+    end.
+
+%% @doc 取小于X的最大整数
+-spec floorr(number()) -> integer().
+floorr(X) ->
+    T = erlang:trunc(X),
+    case X < T of
+        true -> T - 1;
+        _ -> T
+    end.
+endsnippet
+
+snippet unixtime_template "unixtime definition" b
+%% @doc 取得当前的unix时间戳, 单位为秒
+-spec unixtime() -> non_neg_integer().
+unixtime() ->
+    {M, S, _} = os:timestamp(),
+    M * 1000000 + S.
+endsnippet
+
+snippet fun_com "函数头注释" b
+%%====================
+%% ${1:function head comment}
+%%====================
+endsnippet
