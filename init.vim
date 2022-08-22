@@ -8,7 +8,7 @@
 " === my custom performance
 " ===
 let mapleader=' '
-set clipboard+=unnamedplus
+set clipboard=unnamedplus
 nnoremap <C-s> :call SudoWriter()<CR>
 nnoremap <C-q> :q!<CR>
 noremap <LEADER>bn :bn<CR>
@@ -70,7 +70,8 @@ if executable("fcitx") || executable("Vim-WinLangSwitcher.exe")
 endif
 
 "set up function
-set nu hls is ruler showcmd wildmenu wrap relativenumber splitbelow
+set nu hls is ruler showcmd wildmenu wrap relativenumber splitbelow 
+set mouse=a
 set shell=/usr/bin/fish
 set updatetime=100 
 set tabstop=4 shiftwidth=4 expandtab smarttab linespace=1
@@ -86,7 +87,7 @@ syntax enable
 filetype plugin indent on
 
 " erlang缩进管理
-source ~/.config/nvim/plugged/vim-erlang-runtime/indent/erlang.vim
+source ~/.config/nvim/erlang-indent.vim 
 
 " ===
 " === Plug
@@ -122,10 +123,15 @@ Plug 'ghifarit53/tokyonight-vim'
 " vim airline theme
 Plug 'vim-airline/vim-airline-themes'
 
-"show git status in airline
-Plug 'airblade/vim-gitgutter'
+" show git info in new buffer: <LEADER> M
 Plug 'jreybert/vimagit'
-Plug 'mhinz/vim-signify'
+" show git status in side line
+" only support git 
+Plug 'airblade/vim-gitgutter'
+" support git、cvs and so on 
+" Plug 'mhinz/vim-signify'
+
+"show git status in airline
 Plug 'tpope/vim-fugitive'
 
 " sign surround
@@ -168,11 +174,17 @@ Plug 'voldikss/vim-floaterm'
 Plug 'jiangmiao/auto-pairs'
 
 " Erlang indentation and syntax for Vim
-Plug 'vim-erlang/vim-erlang-runtime'
-Plug 'vim-erlang/vim-erlang-compiler'
+" Plug 'vim-erlang/vim-erlang-runtime'
+" Plug 'vim-erlang/vim-erlang-compiler'
 " Plug 'ten0s/syntaxerl'
-Plug 'gleam-lang/gleam.vim'
+" Plug 'gleam-lang/gleam.vim'
 Plug 'neovim/nvim-lspconfig'
+
+" Pliug ranger
+Plug 'rbgrouleff/bclose.vim'
+Plug 'francoiscabrol/ranger.vim'
+
+Plug 'mfussenegger/nvim-dap'
 
 call plug#end()
 
@@ -271,9 +283,12 @@ let g:airline_theme = 'nord'
 " === fzf
 " ===
 nnoremap <LEADER>ff :Files<cr>
+nnoremap <LEADER>fg :GitFiles<cr>
+nnoremap <LEADER>fw :Windows<cr>
+nnoremap <LEADER>fb :Buffers<cr>
 nnoremap <LEADER>fh :History<cr>
 nnoremap <LEADER>fa :Ag<cr>
-nnoremap <LEADER>fl :Lines<cr>
+nnoremap <LEADER>fl :BLines<cr>
 
 " ===
 " === rainbow
@@ -328,20 +343,12 @@ let g:floaterm_width = 0.8
 let g:floaterm_height = 0.6
 
 " ===
-" === syntastic
-" ===
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-" 
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
-" let g:syntastic_erlang_checkers=['syntaxerl']
-
-" ===
 " === nvim-lspconfig
 " ===
 lua require'lspconfig'.erlangls.setup{}
 
+" ===
+" === ranger
+" ===
+let g:ranger_map_keys = 0
+map <leader>f :Ranger<CR>
