@@ -218,11 +218,11 @@ do_handle_info(_Info, _StateName, _State) ->
 %% @doc 计算剩余时间基于timestamp()格式，单位：毫秒
 -spec time_left(TimeMax::integer(), Begin::erlang:timestamp()) -> integer().
 time_left(TimeMax, Begin)->
-    T = erlang:floor(TimeMax - timer:now_diff(os:timestamp(), Begin) / 1000),
-    case T > 0 of
-        true -> T;
-        false -> 0
-    end.
+	T = erlang:floor(TimeMax - timer:now_diff(os:timestamp(), Begin) / 1000),
+	case T > 0 of
+		true -> T;
+		false -> 0
+	end.
 endsnippet
 
 snippet hc "head line comment" b
@@ -230,25 +230,20 @@ snippet hc "head line comment" b
 endsnippet
 
 snippet funchain "function chain" b
-${1:something_fun}(${2:Arg1}) ->
-    Steps =
-	[
-		'${3:do_something}'
-	],
-    Args = #{},
-    do_${1:something_fun}(Steps, ${2:Arg1}, Args).
-
-do_${1:something_fun}(['${3:do_something}' | Rest], ${2:Arg1}, Args = #{}) ->
-	do_${1:something_fun}(Rest, ${2:Arg1}, Args);
 do_${1:something_fun}([], _${2:Arg1}, _Args) ->
-	true.
+	ok;
+do_${1:something_fun}([_ | T], ${2:Arg1}, Args = #{}) ->
+	do_${1:something_fun}(T, ${2:Arg1}, Args);
+do_${1:something_fun}(Steps, _${2:Arg1}, Args) ->
+	?ERR("匹配错误: [Steps: ~w] [Args: ~w]", [Steps, Args]),
+	false.
 endsnippet
 
 snippet timeleft_template "timeleft definition" b
 %% @doc 计算剩余时间基于timestamp()格式，单位：毫秒
 -spec time_left(TimeMax::integer(), Begin::erlang:timestamp()) -> integer().
 time_left(TimeMax, Begin)->
-    T = floorr(TimeMax - timer:now_diff(os:timestamp(), Begin) / 1000),
+	T = floorr(TimeMax - timer:now_diff(os:timestamp(), Begin) / 1000),
     case T > 0 of
         true -> T;
         false -> 0

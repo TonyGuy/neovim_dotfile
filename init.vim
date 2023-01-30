@@ -8,7 +8,7 @@
 " === my custom performance
 " ===
 let mapleader=' '
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
 nnoremap <C-s> :call SudoWriter()<CR>
 nnoremap <C-q> :q!<CR>
 noremap <LEADER>bn :bn<CR>
@@ -186,17 +186,20 @@ Plug 'francoiscabrol/ranger.vim'
 
 Plug 'mfussenegger/nvim-dap'
 
+" show git blame
+" Plug 'tveskag/nvim-blame-line'
+Plug 'zivyangll/git-blame.vim'
+
 call plug#end()
 
 
 " ===
 " === coc.nvim
 " ===
-
-
 " coc-clangd depend: pacman -S clang
 " coc-python depend: pip install pylint jedi
 let g:coc_global_extensions = [
+      \ 'coc-tabnine',
       \ 'coc-json',
       \ 'coc-clangd',
       \ 'coc-cmake',
@@ -352,3 +355,8 @@ lua require'lspconfig'.erlangls.setup{}
 " ===
 let g:ranger_map_keys = 0
 map <leader>f :Ranger<CR>
+
+" ===
+" === git-blame
+" ===
+nnoremap <Leader>s :<C-u>call gitblame#echo()<CR>
