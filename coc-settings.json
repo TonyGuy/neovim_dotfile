@@ -13,5 +13,6 @@
       "command": "erlang_ls",
       "filetypes": ["erlang"]
     }
-  }
+  },
+  "snippets.ultisnips.pythonPrompt": false
 }

@@ -15,7 +15,7 @@ noremap <LEADER>bn :bn<CR>
 noremap <LEADER>bd :bd<CR>
 noremap <LEADER>bp :bp<CR>
 " java compile
-noremap <LEADER>jc :CocCommand java.workspace.compile
+" noremap <LEADER>jc :CocCommand java.workspace.compile
 
 " window size adjust
 " noremap <C-H> :vertical resize -5<CR>
@@ -94,7 +94,7 @@ source ~/.config/nvim/erlang-indent.vim
 " ===
 call plug#begin('~/.config/nvim/plugged')
 
-"depend: sudo npm i -g neovim yarn
+"depend: pnpm i -g neovim yarn
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 "depend: sudo pacman -S fzf
@@ -149,9 +149,9 @@ Plug 'tpope/vim-speeddating'
 " commentary
 Plug 'tyru/caw.vim'
 
-" depend: yay -S python-autopep8
-"         pacman -S clang-format js-beautify shfmt
-"         sudo npm i -g remark-cli
+" depend:
+"         pacman -S shfmt
+"         pnpm i -g remark-cli clang-format js-beautify
 " formatter
 Plug 'Chiel92/vim-autoformat'
 
@@ -204,28 +204,36 @@ let g:coc_global_extensions = [
       \ 'coc-clangd',
       \ 'coc-cmake',
       \ 'coc-snippets',
-      \ 'coc-java',
-      \ 'coc-java-debug',
+      "\ 'coc-java',
+      "\ 'coc-java-debug',
       \ 'coc-python',
+      \ 'coc-go',
       \ 'coc-vimlsp']
 
 set cmdheight=2
-" Use tab for trigger completion with characters ahead and navigate.
+" Use tab for trigger completion with characters ahead and navigate
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config.
+" other plugin before putting this into your config
 inoremap <silent><expr> <TAB>
-     \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
       \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-function! s:check_back_space() abort
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " Use <c-o> to trigger completion.
-inoremap <silent><expr> <C-l> coc#refresh()
+" inoremap <silent><expr> <C-l> coc#refresh()
 " Use `[g` and `]g` to navigate diagnostics
 " Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -303,14 +311,14 @@ let g:rainbow_active = 1
 " ===
 
 " Make <cr> used for completion confirm, snippet expand and jump like VSCode.
-inoremap <silent><expr> <CR>
-      \ pumvisible() ? "\<C-y>" :
-      \ "\<C-g>u\<CR>"
+" inoremap <silent><expr> <CR>
+"      \ pumvisible() ? "\<C-y>" :
+"      \ "\<C-g>u\<CR>"
 
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+" function! s:check_back_space() abort
+"   let col = col('.') - 1
+"   return !col || getline('.')[col - 1]  =~# '\s'
+" endfunction
 
 " ===
 " === vim-autoformat
